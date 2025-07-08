@@ -5,7 +5,6 @@ import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
-import NewConflictPage from './pages/NewConflictPage';
 
 function App() {
   return (
@@ -19,9 +18,7 @@ function App() {
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/conflicts/new" element={<NewConflictPage />} />
-          {/* Example for a specific conflict room: /conflicts/uuid */}
-          {/* <Route path="/conflicts/:id" element={<ConflictRoomPage />} /> */}
+          {/* Add other protected routes here */}
         </Route>
       </Routes>
     </Layout>

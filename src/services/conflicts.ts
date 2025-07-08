@@ -1,27 +1,21 @@
 import { supabase } from '../lib/supabaseClient';
 import { Conflict } from '../types/database';
 
-type ConflictCreationPayload = {
-  title: string;
-  description: string;
-  inviteeEmail: string;
-};
+type ConflictCreate = Omit<Conflict, 'id' | 'created_at' | 'updated_at' | 'created_by' | 'status'>;
+type ConflictUpdate = Partial<Pick<Conflict, 'title' | 'description' | 'status' | 'arbiter_type'>>;
 
 export const conflictsApi = {
-  async createConflictAndInvite(payload: ConflictCreationPayload): Promise<string> {
-    const { data, error } = await supabase.rpc('create_conflict_and_invite', {
-      p_title: payload.title,
-      p_description: payload.description,
-      p_invitee_email: payload.inviteeEmail,
-    });
+  async createConflict(conflictData: ConflictCreate): Promise<Conflict> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
 
-    if (error) {
-      // Provide a more user-friendly error message
-      if (error.message.includes('You cannot invite yourself')) {
-        throw new Error('You cannot invite yourself to a conflict.');
-      }
-      throw new Error(`Failed to create conflict: ${error.message}`);
-    }
+    const { data, error } = await supabase
+      .from('conflicts')
+      .insert({ ...conflictData, created_by: user.id })
+      .select()
+      .single();
+
+    if (error) throw error;
     return data;
   },
 
@@ -32,25 +26,40 @@ export const conflictsApi = {
       .eq('id', id)
       .single();
 
-    if (error) {
-      console.error('Error fetching conflict by ID:', error);
-      return null;
-    }
+    if (error) throw error;
     return data;
   },
 
   async getConflictsForUser(): Promise<Conflict[]> {
-    // RLS policy `Allow members to view their conflicts` handles security.
-    // We can just query the conflicts table directly.
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
     const { data, error } = await supabase
       .from('conflicts')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*');
 
-    if (error) {
-      console.error('Error fetching user conflicts:', error);
-      throw error;
-    }
+    if (error) throw error;
     return data || [];
   },
+
+  async updateConflict(id: string, updates: ConflictUpdate): Promise<Conflict> {
+    const { data, error } = await supabase
+      .from('conflicts')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteConflict(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('conflicts')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  }
 };

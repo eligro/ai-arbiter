@@ -1,19 +1,19 @@
 # Task 3: Core Conflict Flow
 
-**Status: In Progress**
+**Status: Not Started**
 
 - **Frontend:**
-  - [x] Create the "New Conflict" wizard (multi-step form).
-    - [x] Step 1: Title, description.
-    - [x] Step 2: Invite party by email.
-    - [x] Step 3: Review and submit.
+  - [ ] Create the "New Conflict" wizard (multi-step form).
+    - Step 1: Title, description, language.
+    - Step 2: Invite parties (Party A is self, invite Party B by phone).
+    - Step 3: Invite witnesses (optional).
+    - Step 4: Review and submit.
   - [ ] Build the main "Conflict Room" UI.
-    - [ ] Use a tabbed interface: My Arguments, Q&A, Status.
-    - [ ] Implement CRUD functionality for `inputs` (arguments).
-    - [ ] Display questions from the arbiter.
-    - [ ] Show the current status of the conflict.
-- **Backend (Database & API):**
-  - [x] Implement `create_conflict_and_invite` RPC to create a new conflict and its members.
-  - [x] Update `GET /conflicts` RLS to fetch conflicts for the current user.
+    - Use a tabbed interface: My Arguments, Q&A, Status.
+    - Implement CRUD functionality for `inputs` (arguments).
+    - Display questions from the arbiter.
+    - Show the current status of the conflict.
+- **Backend (API Endpoints):**
+  - [ ] Implement `POST /conflicts` to create a new conflict and its members.
   - [ ] Implement `GET /conflicts/:id` to fetch data for the conflict room (respecting RLS).
   - [ ] Implement `POST /inputs` and `PATCH /inputs/:id`.
