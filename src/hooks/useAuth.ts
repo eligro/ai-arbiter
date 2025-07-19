@@ -8,8 +8,9 @@ export const useAuth = () => {
     isLoading, 
     signIn, 
     signUp, 
+    signInWithGoogle,
     signOut 
   } = useAuthStore();
 
-  return { user, session, isAuthenticated, isLoading, signIn, signUp, signOut };
+  return { user, session, isAuthenticated, isLoading, signIn, signUp, signInWithGoogle, signOut };
 };

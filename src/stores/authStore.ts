@@ -10,6 +10,7 @@ interface AuthState {
   initialize: () => void;
   signUp: (credentials: SignUpWithPasswordCredentials) => Promise<void>;
   signIn: (credentials: SignInWithPasswordCredentials) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -66,6 +67,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       throw error;
     } finally {
       // isLoading will be set to false by onAuthStateChange listener
+    }
+  },
+
+  signInWithGoogle: async () => {
+    set({ isLoading: true });
+    try {
+      await authApi.signInWithGoogle();
+      // OAuth redirect will happen, onAuthStateChange will handle the session
+    } catch (error) {
+      console.error('Google sign in failed:', error);
+      set({ isLoading: false });
+      throw error;
     }
   },
 
